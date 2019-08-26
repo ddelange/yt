@@ -99,7 +99,7 @@ All rights reserved.
   local PLAYLIST=false
   local KEEP_AUDIO=false
   local CUSTOM_AUDIO_BITRATE=false
-  local AUDIO_BITRATE=256
+  local AUDIO_BITRATE=257
   local MAX_PIXELS=1080
   local MP4=false
   local AVC=false
@@ -250,7 +250,7 @@ All rights reserved.
       if [ $MAX_PIXELS -gt 1080 ] && ! $SILENT; then
         echo "Maximum resolution is set to ${MAX_PIXELS} and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
       fi
-      local DOWNLOAD_OPTIONS=(--merge-output-format "mp4" --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}000 -ar 44100")
+      local DOWNLOAD_OPTIONS=(--merge-output-format "mp4" --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar 44100")
       if $AVC; then
         DOWNLOAD_OPTIONS+=(-f "(bestvideo[vcodec^=avc][height<=${MAX_PIXELS}]/bestvideo"'[vcodec!^=vp9]'"[height<=${MAX_PIXELS}])+(bestaudio[acodec=opus]/bestaudio)/best[height<=${MAX_PIXELS}]")
       else
