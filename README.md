@@ -142,6 +142,6 @@ OPTIONS
 
 BSD 3-Clause License
 
-Copyright (c) 2019, David de Lange
+Copyright (c) 2019, ddelange
 All rights reserved.
 ```

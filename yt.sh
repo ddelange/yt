@@ -87,7 +87,7 @@ OPTIONS
 
 BSD 3-Clause License
 
-Copyright (c) 2019, David de Lange
+Copyright (c) 2019, ddelange
 All rights reserved.
 "
   local OPTIND  # https://stackoverflow.com/a/16655341/5511061
@@ -269,7 +269,7 @@ All rights reserved.
 
   # echo available formats for first URL
   if ! $SILENT; then
-    youtube-dl -F --no-playlist "${URLS[0]}"
+    youtube-dl -F --no-playlist "${URLS[0]}" || return
   fi
   # debug the command (non-parallel)
   # a=(youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[@]}")
