@@ -21,14 +21,15 @@ The audio streams in converted (video) files from `yt` will generally be of high
 Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac`.
 
 #### OSX
-If `--enable-gpl` is specified, `--enable-nonfree` must also be specified to work using `--with-fdk-aac`.
 ```bash
-brew tap varenc/ffmpeg  # https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#Additionaloptions
-brew install varenc/ffmpeg/ffmpeg --with-fdk-aac --with-srt --with-wavpack --with-xvid
+brew tap homebrew-ffmpeg/ffmpeg  # https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#Additionaloptions
+brew install homebrew-ffmpeg/ffmpeg/ffmpeg --with-fdk-aac --with-srt --with-wavpack --with-xvid  # If `--enable-gpl` is specified, `--enable-nonfree` must also be specified to work using `--with-fdk-aac`
 brew install atomicparsley youtube-dl
-sudo youtube-dl -U
+sudo youtube-dl -U  # check that all is well
+
 git clone https://github.com/ddelange/yt.git ./yt
-echo "source '$(pwd)/yt/yt.sh'" >> ~/.bashrc  # and restart shell
+cd ./yt && bash ./install.sh
+yt --help  # check that all is well
 ```
 
 #### Debian/Ubuntu
@@ -37,9 +38,11 @@ echo "source '$(pwd)/yt/yt.sh'" >> ~/.bashrc  # and restart shell
 ```bash
 sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 sudo chmod a+rx /usr/local/bin/youtube-dl
-sudo youtube-dl -U
+sudo youtube-dl -U  # check that all is well
+
 git clone https://github.com/ddelange/yt.git ./yt
-echo "source '$(pwd)/yt/yt.sh'" >> ~/.bashrc  # and restart shell
+cd ./yt && bash ./install.sh
+yt --help  # check that all is well
 ```
 
 #### Windows

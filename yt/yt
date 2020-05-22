@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 yt() {
   local usage="NAME
       yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
@@ -307,3 +309,4 @@ All rights reserved.
 # yt -P 1440 -v -m 75fEhQlc9h4 # will download 480p mp4 av01
 # yt -P 1440 -v -m -M 75fEhQlc9h4 # will download 1080p mp4 avc
 # yt -ka 215 ESxIaJWUtAs 75fEhQlc9h4 # two audio files simultaneously at 215kbit/s + original audio files
+yt "$@"
