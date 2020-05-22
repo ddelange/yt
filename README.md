@@ -18,21 +18,28 @@ The audio streams in converted (video) files from `yt` will generally be of high
 [![yt vs online](https://user-images.githubusercontent.com/14880945/62381156-246feb80-b54b-11e9-8445-3890c091d0c3.gif)](https://github.com/alexkay/spek)
 
 ## Installation
-Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac`.
+Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac` (fdk-aac is GPL-incompatible, so this will produce an unredistributable compilation).
 
 #### OSX
+To install `yt` and its dependencies:
 ```bash
-brew tap homebrew-ffmpeg/ffmpeg  # https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#Additionaloptions
-brew install homebrew-ffmpeg/ffmpeg/ffmpeg --with-fdk-aac --with-srt --with-wavpack --with-xvid  # If `--enable-gpl` is specified, `--enable-nonfree` must also be specified to work using `--with-fdk-aac`
-brew install atomicparsley youtube-dl
-sudo youtube-dl -U  # check that all is well
+brew install ddelange/brewformulae/yt
+```
 
+Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
+```bash
 git clone https://github.com/ddelange/yt.git ./yt
 cd ./yt && bash ./install.sh
 yt --help  # check that all is well
 ```
 
 #### Debian/Ubuntu
+On Linux, you should be able to use [Homebrew](https://docs.brew.sh/Homebrew-on-Linux) as well:
+```bash
+brew install ddelange/brewformulae/yt
+```
+
+Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
 - Compile `ffmpeg` including `--with-fdk-aac`. See example instructions, pick your favorite: [[1]](https://seanthegeek.net/455/how-to-compile-and-install-ffmpeg-4-0-on-debian-ubuntu/) [[2]](https://gist.github.com/rafaelbiriba/7f2d7c6f6c3d6ae2a5cb)
 - [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`:
 ```bash
@@ -46,6 +53,8 @@ yt --help  # check that all is well
 ```
 
 #### Windows
+Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about), and using instructions above. But since `youtube-dl` has dedicated Windows distributions available, you could try the following:
+
 [untested, assumes you're running Bash for Windows]
 - [Compile](https://github.com/jb-alvarado/media-autobuild_suite#information) `ffmpeg` including the `non-free tools` (which will contain `libfdk-aac`).
 - Install `youtube-dl`:
