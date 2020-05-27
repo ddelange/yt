@@ -18,7 +18,7 @@ The audio streams in converted (video) files from `yt` will generally be of high
 [![yt vs online](https://user-images.githubusercontent.com/14880945/62381156-246feb80-b54b-11e9-8445-3890c091d0c3.gif)](https://github.com/alexkay/spek)
 
 ## Installation
-Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac` (fdk-aac is GPL-incompatible, so this will produce an unredistributable compilation).
+Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac` (fdk-aac is GPL-incompatible, so this will produce an unredistributable distribution).
 
 #### OSX
 To install `yt` and its dependencies:
@@ -27,30 +27,32 @@ brew install ddelange/brewformulae/yt
 ```
 
 Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
-```bash
-git clone https://github.com/ddelange/yt.git ./yt
-cd ./yt && bash ./install.sh
-yt --help  # check that all is well
-```
+- Compile `ffmpeg` [including](https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#Additionaloptions) `--with-fdk-aac`.
+- [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`.
+- Install [`atomicparsley`](https://github.com/wez/atomicparsley).
+- Put [`yt`](yt/yt) in your path:
+    ```bash
+    git clone https://github.com/ddelange/yt.git ./yt
+    cd ./yt && bash ./install.sh
+    yt --help  # check that all is well
+    ```
 
 #### Debian/Ubuntu
-On Linux, you should be able to use [Homebrew](https://docs.brew.sh/Homebrew-on-Linux) as well:
+On Linux, you can use [Homebrew](https://docs.brew.sh/Homebrew-on-Linux) as well:
 ```bash
 brew install ddelange/brewformulae/yt
 ```
 
 Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
 - Compile `ffmpeg` including `--with-fdk-aac`. See example instructions, pick your favorite: [[1]](https://seanthegeek.net/455/how-to-compile-and-install-ffmpeg-4-0-on-debian-ubuntu/) [[2]](https://gist.github.com/rafaelbiriba/7f2d7c6f6c3d6ae2a5cb)
-- [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`:
-```bash
-sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-sudo chmod a+rx /usr/local/bin/youtube-dl
-sudo youtube-dl -U  # check that all is well
-
-git clone https://github.com/ddelange/yt.git ./yt
-cd ./yt && bash ./install.sh
-yt --help  # check that all is well
-```
+- [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`.
+- Install [`atomicparsley`](https://github.com/wez/atomicparsley).
+- Put [`yt`](yt/yt) in your path:
+    ```bash
+    git clone https://github.com/ddelange/yt.git ./yt
+    cd ./yt && bash ./install.sh
+    yt --help  # check that all is well
+    ```
 
 #### Windows
 Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about), and using instructions above. But since `youtube-dl` has dedicated Windows distributions available, you could try the following:
@@ -61,7 +63,7 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
     - [either] Assuming python / python3 and pip / pip3 are installed, run `sudo pip3 install youtube-dl` or `sudo pip3 install youtube-dl` respectively.
     - [or] Download [youtube-dl.exe](https://yt-dl.org/latest/youtube-dl.exe) and place it in any location on your [PATH](https://en.wikipedia.org/wiki/PATH_%28variable%29).
 - Make sure `youtube-dl` is recognized by your shell by typing `youtube-dl --version`.
-- Add [`yt.sh`](https://github.com/ddelange/yt/blob/master/yt.sh) to your bash profile / bashrc, and restart your shell.
+- Put [`yt`](yt/yt) in your path.
 
 ## Usage
 Type `yt -h` to print the following text and exit. Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard.
@@ -80,7 +82,7 @@ DESCRIPTION
       Maintains a  download archive,  to prevent duplicates when  periodically downloading
       YouTube playlists or Soundcloud sets.  Parses title  ("%(artist)s - %(title)s")  and
       retrieves a thumbnail, and injects these into file metadata.  Adds the url id of the
-      source to  the filename,  attempts to  bypass geographical  restrictions,  and more.
+      source to the filename, and attempts to bypass geographical restrictions.
 
       youtube-dl  is a command-line program to download videos from  YouTube.com  and many
       more sites.  It requires the Python interpreter, version 2.6, 2.7, or 3.2+,  and  it
@@ -130,15 +132,16 @@ OPTIONS
             YouTube, or LAME MP3 / WAV for Soundcloud URLs.  Ignored when -v is specified.
 
       -a KBITS_PER_SECOND
-            Set the output audio bitrate.  Defaults to 256kbit/s (and 215kbit/s with -vm).
+            Set the output audio bitrate. Defaults to 256kbit/s.
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
             specified. Defaults to 1080px.
 
       -m
-            Use MP4 when merging (converting) audio/video streams, keeping video codecs if
-            possible and converting audio codecs to 215kbit/s AAC (resolving 40KHz waves).
+            Use MP4 when merging audio/video streams, keeping video codecs if possible and
+            converting audio to 256kbit/s AAC (resolving full 44.1KHz stream). If no merge
+            is needed,  the (single) source file is kept  and no conversion is  performed.
             Default behaviour:  copy downloaded audio/video streams into an MKV container,
             using OPUS audio codec and  VP9 video codec for small filesizes.  Ignored when
             -v is not specified. For YouTube this will yield a maximum resolution of 1080.
