@@ -4,7 +4,7 @@ Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For 
 ![yt](https://user-images.githubusercontent.com/14880945/62221781-86e1b400-b3b2-11e9-873f-2dd323bcf154.gif)
 
 ## Description
-yt is a bash function that optimizes the use of youtube-dl for audio and videophiles with comprehensive and customizable presets, empirically tested on multiple streams. Maintains a download archive, to prevent duplicates when periodically downloading YouTube playlists or Soundcloud sets. Parses title ("%(artist)s - %(title)s") and retrieves a thumbnail, and injects these into file metadata. Adds the url id of the source to the filename, attempts to bypass geographical restrictions, and more.
+[yt](https://github.com/ddelange/yt) is a pure-bash command-line tool that optimizes the use of [youtube-dl](https://github.com/ytdl-org/youtube-dl) for audio and videophiles with comprehensive and customizable presets, empirically tested on multiple streams. Maintains a download archive, to prevent duplicates when periodically downloading YouTube playlists or Soundcloud sets. Parses title ("%(artist)s - %(title)s") and retrieves a thumbnail, and injects these into file metadata. Adds the url id of the source to the filename, attempts to bypass geographical restrictions, and more.
 
 #### Features include, but are not limited to:
 - Parallel downloads
@@ -66,7 +66,8 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
 - Put [`yt`](yt/yt) in your path.
 
 ## Usage
-Type `yt -h` to print the following text and exit. Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard.
+- Type `yt -h` to print the following text and exit. 
+- Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard.
 ```
 NAME
       yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
