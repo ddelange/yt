@@ -36,12 +36,12 @@ OPTIONS
             sufficient permissions (run with sudo if needed).
 
       -s
-            Enable silent mode.
+            Enable silent mode (send stdout to /dev/null).
 
       -S
-            Enable sequential mode. Default behaviour: parallel mode (send to background).
-            Playlists are downloaded sequentially, as youtube-dl does not support parallel
-            downloading of playlists (see #3746).
+            Enable sequential mode.  Default behaviour: parallel mode.  Each playlist will
+            be downloaded sequentially as youtube-dl does not support parallel downloading
+            of playlists (see #3746). The MAXPROCS (env) var sets parallelism (default 4).
 
       -v
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
@@ -66,6 +66,9 @@ OPTIONS
 
       -a KBITS_PER_SECOND
             Set the output audio bitrate. Defaults to 256kbit/s.
+
+      -r HERTZ
+            Set the output audio sampling rate. Defaults to 44100Hz.
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
@@ -95,6 +98,7 @@ All rights reserved."
   local OPTIND  # https://stackoverflow.com/a/16655341/5511061
   local SILENT=false
   local PARALLEL=true
+  local PARALLELISM=${MAXPROCS:=4}
   local VIDEO_MODE=false
   local CLIPBOARD=false
   local CUSTOM_DESTINATION=false
@@ -102,6 +106,7 @@ All rights reserved."
   local KEEP_AUDIO=false
   local CUSTOM_AUDIO_BITRATE=false
   local AUDIO_BITRATE=257
+  local AUDIO_SAMPLING_RATE=44100
   local MAX_PIXELS=1080
   local MP4=false
   local AVC=false
@@ -125,7 +130,7 @@ All rights reserved."
   if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     set -- "-h"
   fi
-  while getopts ":hUsSvcDpka:P:mMH" opt; do
+  while getopts ":hUsSvcDpka:r:P:mMH" opt; do
     case $opt in
       U)
         sudo youtube-dl -U
@@ -170,6 +175,21 @@ All rights reserved."
             ;;
         esac
         ;;
+      r)
+        case $OPTARG in
+          ''|*[!0-9]*)
+            echo "-r: specify sampling rate as integer. Type \"yt -h\" for more info."
+            return
+            ;;
+          *)
+            if [ $OPTARG -gt 48000 ]; then
+              echo "-r: sampling rate should not be greater than 48000Hz."
+              return
+            fi
+            AUDIO_SAMPLING_RATE=$OPTARG
+            ;;
+        esac
+        ;;
       P)
         case $OPTARG in
           ''|*[!0-9]*)
@@ -210,7 +230,7 @@ All rights reserved."
   done
 
   if $CLIPBOARD || [ ${#URLS[@]} -eq 0 ]; then
-    URLS=($(pbpaste))
+    URLS+=($(pbpaste))
   fi
   if ! $SILENT; then
     echo "${URLS[@]}"
@@ -233,15 +253,13 @@ All rights reserved."
 
   # BASE_OPTIONS
   local BASE_OPTIONS=(--geo-bypass --ignore-config -i)
-  local output_filename="${destination}%(title)s %(id)s.%(ext)s"
+  local output_filename="${destination}%(title).200s %(id)s.%(ext)s"
   local download_archive="${destination}downloaded.txt"
   BASE_OPTIONS+=(-o "$output_filename")
   BASE_OPTIONS+=(--download-archive "$download_archive")
+  BASE_OPTIONS+=(--add-metadata --metadata-from-title "%(artist)s - %(title)s")
   if ! $PLAYLIST; then
     BASE_OPTIONS+=(--no-playlist)
-  fi
-  if ! $VIDEO_MODE; then
-    BASE_OPTIONS+=(--add-metadata --metadata-from-title "%(artist)s - %(title)s")
   fi
 
 
@@ -254,7 +272,7 @@ All rights reserved."
       if [ $MAX_PIXELS -gt 1080 ] && ! $SILENT; then
         echo "Maximum resolution is set to ${MAX_PIXELS} and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
       fi
-      local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar 44100")
+      local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE}")
       if $AVC; then
         DOWNLOAD_OPTIONS+=(-f "(bestvideo[vcodec^=avc][height<=${MAX_PIXELS}]/bestvideo"'[vcodec!^=vp9]'"[height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
       else
@@ -264,7 +282,7 @@ All rights reserved."
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(bestvideo[vcodec=vp9][height<=${MAX_PIXELS}]/bestvideo[vcodec!=vp9.2][height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
     fi
   else
-    local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "-ar 44100" -x -f "${audio_selector}/best")
+    local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "-ar ${AUDIO_SAMPLING_RATE}" -x -f "${audio_selector}/best")
     if $KEEP_AUDIO; then
       DOWNLOAD_OPTIONS+=(-k)
     fi
@@ -281,21 +299,9 @@ All rights reserved."
 
   if $PARALLEL; then
     if $SILENT; then
-      len=$((${#URLS[@]}-2))
-      if [ $len -gt -1 ]; then
-        for i in $(seq 0 $len); do
-          (youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[i]}" > /dev/null &)
-        done
-      fi
-      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[$(($len+1))]}" > /dev/null
+      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "{}" > /dev/null
     else
-      len=$((${#URLS[@]}-2))
-      if [ $len -gt -1 ]; then
-        for i in $(seq 0 $len); do
-          (youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[i]}" &)
-        done
-      fi
-      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[$(($len+1))]}"
+      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "{}"
     fi
   else
     if $SILENT; then

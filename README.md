@@ -66,8 +66,11 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
 - Put [`yt`](yt/yt) in your path.
 
 ## Usage
-- Type `yt -h` to print the following text and exit. 
+Some examples:
+- Type `yt -h` to print the following text and exit.
 - Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard.
+- Type `yt -v` for (max) 1080p mkv download.
+
 ```
 NAME
       yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
@@ -104,12 +107,12 @@ OPTIONS
             sufficient permissions (run with sudo if needed).
 
       -s
-            Enable silent mode.
+            Enable silent mode (send stdout to /dev/null).
 
       -S
-            Enable sequential mode. Default behaviour: parallel mode (send to background).
-            Playlists are downloaded sequentially, as youtube-dl does not support parallel
-            downloading of playlists (see #3746).
+            Enable sequential mode.  Default behaviour: parallel mode.  Each playlist will
+            be downloaded sequentially as youtube-dl does not support parallel downloading
+            of playlists (see #3746). The MAXPROCS (env) var sets parallelism (default 4).
 
       -v
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
@@ -134,6 +137,9 @@ OPTIONS
 
       -a KBITS_PER_SECOND
             Set the output audio bitrate. Defaults to 256kbit/s.
+
+      -r HERTZ
+            Set the output audio sampling rate. Defaults to 44100Hz.
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
