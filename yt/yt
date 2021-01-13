@@ -47,8 +47,8 @@ OPTIONS
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
 
       -c
-            Fetch space separated  URLs from clipboard.  Overwrites manually  passed URLs.
-            Auto-enables when no URLs are manually passed.
+            Fetch space separated  URLs from clipboard,  additional to the manually passed
+            URLs. Auto-enables when no URLs are manually passed.
 
       -D POSIX_PATH
             Set the destination path.  Used for both the (intermediate) output and for the
@@ -72,7 +72,7 @@ OPTIONS
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified. Defaults to 1080px.
+            specified.  Defaults to 1080px.  Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
@@ -264,22 +264,28 @@ All rights reserved."
 
 
   # DOWNLOAD_OPTIONS
-  local audio_selector="bestaudio[acodec=opus]/bestaudio[container*=dash]/bestaudio"
+  local audio_selector='bestaudio[acodec=opus]/bestaudio[container*=dash]/bestaudio'
+  local px_spec="height<=${MAX_PIXELS}"
+  local hdr_selector="bestvideo[vcodec^=vp9][${px_spec}]/bestvideo[${px_spec}]/bestvideo"
+  local avc_selector="bestvideo[vcodec^=avc][${px_spec}]/bestvideo"'[vcodec!^=vp9]'"[${px_spec}]/bestvideo[ext=mp4]"
+  local av1_selector="bestvideo[vcodec^=av01][${px_spec}]/bestvideo[vcodec^=av][${px_spec}]/bestvideo"'[vcodec!^=vp9]'"[${px_spec}]/bestvideo[ext=mp4]"
+  local default_video_selector="bestvideo[vcodec=vp9][${px_spec}]/bestvideo[vcodec!=vp9.2][${px_spec}]/bestvideo[${px_spec}]/bestvideo"
+  local fallback_video_selector="best[${px_spec}]/best"
   if $VIDEO_MODE; then
     if $HDR; then
-      local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(bestvideo[vcodec^=vp9][height<=${MAX_PIXELS}]/bestvideo[height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
+      local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${hdr_selector})+(${audio_selector})/${fallback_video_selector}")
     elif $MP4; then
-      if [ $MAX_PIXELS -gt 1080 ] && ! $SILENT; then
-        echo "Maximum resolution is set to ${MAX_PIXELS} and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
-      fi
       local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE}")
+      if [ $MAX_PIXELS -gt 1080 ] && ! $SILENT; then
+        echo "Maximum resolution is set to ${MAX_PIXELS}, and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
+      fi
       if $AVC; then
-        DOWNLOAD_OPTIONS+=(-f "(bestvideo[vcodec^=avc][height<=${MAX_PIXELS}]/bestvideo"'[vcodec!^=vp9]'"[height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
+        DOWNLOAD_OPTIONS+=(-f "(${avc_selector})+(${audio_selector})/${fallback_video_selector}")
       else
-        DOWNLOAD_OPTIONS+=(-f "(bestvideo[vcodec^=av01][height<=${MAX_PIXELS}]/bestvideo[vcodec^=av][height<=${MAX_PIXELS}]/bestvideo"'[vcodec!^=vp9]'"[height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
+        DOWNLOAD_OPTIONS+=(-f "(${av1_selector})+(${audio_selector})/${fallback_video_selector}")
       fi
     else
-      local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(bestvideo[vcodec=vp9][height<=${MAX_PIXELS}]/bestvideo[vcodec!=vp9.2][height<=${MAX_PIXELS}])+(${audio_selector})/best[height<=${MAX_PIXELS}]")
+      local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${default_video_selector})+(${audio_selector})/${fallback_video_selector}")
     fi
   else
     local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "-ar ${AUDIO_SAMPLING_RATE}" -x -f "${audio_selector}/best")

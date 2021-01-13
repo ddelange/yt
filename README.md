@@ -66,10 +66,11 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
 - Put [`yt`](yt/yt) in your path.
 
 ## Usage
-Some examples:
+
+tl;dr:
 - Type `yt -h` to print the following text and exit.
-- Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard.
-- Type `yt -v` for (max) 1080p mkv download.
+- Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard (see also `-c`).
+- Type `yt -vH -P 2160` do download best quality (4K HDR if available) into mkv.
 
 ```
 NAME
@@ -118,8 +119,8 @@ OPTIONS
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
 
       -c
-            Fetch space separated  URLs from clipboard.  Overwrites manually  passed URLs.
-            Auto-enables when no URLs are manually passed.
+            Fetch space separated  URLs from clipboard,  additional to the manually passed
+            URLs. Auto-enables when no URLs are manually passed.
 
       -D POSIX_PATH
             Set the destination path.  Used for both the (intermediate) output and for the
@@ -143,7 +144,7 @@ OPTIONS
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified. Defaults to 1080px.
+            specified.  Defaults to 1080px.  Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
