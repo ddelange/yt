@@ -246,16 +246,17 @@ All rights reserved."
   # set paths
   if ! $CUSTOM_DESTINATION; then
     if $VIDEO_MODE; then
-      local destination="${YT_MUSIC_DIR:-~/Movies/yt/}"
+      local destination="${YT_MUSIC_DIR:-~/Movies/yt}"
     else
-      local destination="${YT_VIEDO_DIR:-~/Music/yt/}"
+      local destination="${YT_VIEDO_DIR:-~/Music/yt}"
     fi
   else
     local destination="$CUSTOM_DESTINATION"
-    local len=$((${#destination}-1))
-    if [ "${destination:len}" != "/" ]; then
-      destination="${destination}/"
-    fi
+  fi
+  # ensure trailing slash on $destination
+  local len=$((${#destination}-1))
+  if [ "${destination:len}" != "/" ]; then
+    destination="${destination}/"
   fi
 
   # BASE_OPTIONS
