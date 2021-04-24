@@ -115,6 +115,9 @@ OPTIONS
             be downloaded sequentially as youtube-dl does not support parallel downloading
             of playlists (see #3746). The MAXPROCS (env) var sets parallelism (default 4).
 
+      -f
+            Force download, even when already recorded in --download-archive.
+
       -v
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
 
@@ -125,7 +128,7 @@ OPTIONS
       -D POSIX_PATH
             Set the destination path.  Used for both the (intermediate) output and for the
             download archive. Defaults to  "~/Music/yt"  and  "~/Movies/yt"  for audio and
-            video mode respectively.
+            video mode respectively. Override defaults with YT_MUSIC_DIR and YT_VIDEO_DIR.
 
       -p
             Enable playlist mode. When the input URL contains reference to a playlist, the
