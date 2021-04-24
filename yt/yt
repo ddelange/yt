@@ -43,6 +43,9 @@ OPTIONS
             be downloaded sequentially as youtube-dl does not support parallel downloading
             of playlists (see #3746). The MAXPROCS (env) var sets parallelism (default 4).
 
+      -f
+            Force download, even when already recorded in --download-archive.
+
       -v
             Enable video mode. Defaults to audio mode. Only mono and stereo are supported.
 
@@ -53,7 +56,7 @@ OPTIONS
       -D POSIX_PATH
             Set the destination path.  Used for both the (intermediate) output and for the
             download archive. Defaults to  \"~/Music/yt\"  and  \"~/Movies/yt\"  for audio and
-            video mode respectively.
+            video mode respectively. Override defaults with YT_MUSIC_DIR and YT_VIDEO_DIR.
 
       -p
             Enable playlist mode. When the input URL contains reference to a playlist, the
@@ -104,6 +107,7 @@ All rights reserved."
   local CUSTOM_DESTINATION=false
   local PLAYLIST=false
   local KEEP_AUDIO=false
+  local FORCE=false
   local CUSTOM_AUDIO_BITRATE=false
   local AUDIO_BITRATE=257
   local AUDIO_SAMPLING_RATE=44100
@@ -130,7 +134,7 @@ All rights reserved."
   if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     set -- "-h"
   fi
-  while getopts ":hUsSvcDpka:r:P:mMH" opt; do
+  while getopts ":hUsSfvcD:pka:r:P:mMH" opt; do
     case $opt in
       U)
         sudo youtube-dl -U
@@ -143,6 +147,9 @@ All rights reserved."
         ;;
       S)
         PARALLEL=false
+        ;;
+      f)
+        FORCE=true
         ;;
       v)
         VIDEO_MODE=true
@@ -222,7 +229,7 @@ All rights reserved."
         return;;
     esac
   done
-  shift $((OPTIND -1))
+  shift "$((OPTIND - 1))"
   # get remaining arguments, treated as urls
   while test $# -gt 0; do
     URLS+=("$1")
@@ -239,16 +246,17 @@ All rights reserved."
   # set paths
   if ! $CUSTOM_DESTINATION; then
     if $VIDEO_MODE; then
-      local destination="~/Movies/yt/"
+      local destination="${YT_VIDEO_DIR:-~/Movies/yt}"
     else
-      local destination="~/Music/yt/"
+      local destination="${YT_MUSIC_DIR:-~/Music/yt}"
     fi
   else
     local destination="$CUSTOM_DESTINATION"
-    local len=$((${#destination}-1))
-    if [ "${destination:len}" != "/" ]; then
-      destination="${destination}/"
-    fi
+  fi
+  # ensure trailing slash on $destination
+  local len=$((${#destination}-1))
+  if [ "${destination:len}" != "/" ]; then
+    destination="${destination}/"
   fi
 
   # BASE_OPTIONS
@@ -256,7 +264,9 @@ All rights reserved."
   local output_filename="${destination}%(title).200s %(id)s.%(ext)s"
   local download_archive="${destination}downloaded.txt"
   BASE_OPTIONS+=(-o "$output_filename")
-  BASE_OPTIONS+=(--download-archive "$download_archive")
+  if ! $FORCE; then
+    BASE_OPTIONS+=(--download-archive "$download_archive")
+  fi
   BASE_OPTIONS+=(--add-metadata --metadata-from-title "%(artist)s - %(title)s")
   if ! $PLAYLIST; then
     BASE_OPTIONS+=(--no-playlist)
