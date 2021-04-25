@@ -104,7 +104,7 @@ All rights reserved."
   local PARALLELISM=${MAXPROCS:=4}
   local VIDEO_MODE=false
   local CLIPBOARD=false
-  local CUSTOM_DESTINATION=false
+  local CUSTOM_DESTINATION=
   local PLAYLIST=false
   local KEEP_AUDIO=false
   local FORCE=false
@@ -244,14 +244,14 @@ All rights reserved."
   fi
 
   # set paths
-  if ! $CUSTOM_DESTINATION; then
+  if [[ $CUSTOM_DESTINATION ]]; then
+    local destination="$CUSTOM_DESTINATION"
+  else
     if $VIDEO_MODE; then
       local destination="${YT_VIDEO_DIR:-~/Movies/yt}"
     else
       local destination="${YT_MUSIC_DIR:-~/Music/yt}"
     fi
-  else
-    local destination="$CUSTOM_DESTINATION"
   fi
   # ensure trailing slash on $destination
   local len=$((${#destination}-1))
