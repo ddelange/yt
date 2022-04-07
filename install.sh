@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # based on https://github.com/alexanderepstein/Bash-Snippets/blob/v1.23.0/install.sh
 
-# bash ./install.sh
-# bash ./install.sh --prefix="/usr/local" all
+# Interactive install:
+# $ bash ./install.sh
+# Install yt:
+# $ bash ./install.sh yt
+# Install to custom location (must be first argument):
+# $ bash ./install.sh --prefix="/usr/local" yt
 
 declare -a tools=(yt)
 prefix="/usr/local"
