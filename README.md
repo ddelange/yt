@@ -68,9 +68,9 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
 ## Usage
 
 tl;dr:
-- Type `yt -h` to print the following text and exit.
-- Type `yt` to download audio files for the (space separated) URL(s) fetched from clipboard (see also `-c`).
-- Type `yt -vH -P 2160` do download best quality (4K HDR if available) into mkv.
+- Type `yt` to download m4a audio files for the (space separated) URL(s) fetched from clipboard (see also `-c`).
+- Type `yt -vmM` to download video into mp4, up to 1080p, preferably in the older AVC codec for better compatibility.
+- Type `yt -vHP 2160` to download best quality video into mkv, up to 4K HDR if available.
 
 ```
 NAME
