@@ -69,7 +69,7 @@ Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.micr
 
 tl;dr:
 - Type `yt` to download m4a audio files for the (space separated) URL(s) fetched from clipboard (see also `-c`).
-- Type `yt -vmM` to download video into mp4, up to 1080p, preferably in the older AVC codec for better compatibility.
+- Type `yt -vmM` to download video into mp4, up to 1080p, preferably with AVC codec for better compatibility.
 - Type `yt -vHP 2160` to download best quality video into mkv, up to 4K HDR if available.
 
 ```
