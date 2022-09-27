@@ -39,9 +39,9 @@ OPTIONS
             Enable silent mode (send stdout to /dev/null).
 
       -S
-            Enable sequential mode.  Default behaviour: parallel mode.  Each playlist will
-            be downloaded sequentially as youtube-dl does not support parallel downloading
-            of playlists (see #3746). The MAXPROCS (env) var sets parallelism (default 4).
+            Enable sequential mode.  Default behaviour: parallel mode.  The MAXPROCS (env)
+            var sets parallelism  (default 4).  To download YouTube playlists in parallel,
+            use e.g. \"yt -v \$(youtube-dl --get-id --flat-playlist <playlist-url>)\".
 
       -f
             Force download, even when already recorded in --download-archive.
@@ -59,7 +59,7 @@ OPTIONS
             video mode respectively. Override defaults with YT_MUSIC_DIR and YT_VIDEO_DIR.
 
       -p
-            Enable playlist mode. When the input URL contains reference to a playlist, the
+            Enable playlist mode. When a video URL contains a reference to a playlist, the
             whole playlist will be  downloaded.  Will only download URLs that have not yet
             been recorded in the download archive.
 
