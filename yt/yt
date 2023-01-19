@@ -127,10 +127,6 @@ All rights reserved."
   # TODO
   # Support playlists in parallel https://github.com/ytdl-org/youtube-dl/issues/3746#issuecomment-446694257
 
-  # TODO
-  # Support CC / subs (ffmpeg install using --with-srt)
-  # --write-auto-sub --sub-lang "en,nl,de" --sub-format "srt/best" --embed-subs --convert-subs "srt"
-
   if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     set -- "-h"
   fi
@@ -297,6 +293,7 @@ All rights reserved."
     else
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${default_video_selector})+(${audio_selector})/${fallback_video_selector}")
     fi
+    DOWNLOAD_OPTIONS+=(--all-subs --sub-format "srt/best")
   else
     local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "-ar ${AUDIO_SAMPLING_RATE}" -x -f "${audio_selector}/best")
     if $KEEP_AUDIO; then

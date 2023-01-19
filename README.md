@@ -13,6 +13,8 @@ Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For 
 - HDR video (MKV)
 - Playlist mode (currently each playlist is download sequentially)
 - Custom audio bitrate, video resolution, destination folder
+- Embedded subtitle tracks
+- Embedded metadata like chapter information and description
 
 The audio streams in converted (video) files from `yt` will generally be of higher quality compared to [online alternatives](https://www.google.nl/search?q=youtube+to+mp3+online), while maintaining a comparable file size. This is achieved by preferring WAV/OPUS source streams, and by converting using the [Fraunhofer FDK AAC codec library](https://trac.ffmpeg.org/wiki/Encode/AAC#fdk_aac) at a bitrate of 256kbit/s (sufficient to encode a full 44.1kHz stream using `libfdk_aac` without losing detail at higher frequencies).
 [![yt vs online](https://user-images.githubusercontent.com/14880945/62381156-246feb80-b54b-11e9-8445-3890c091d0c3.gif)](https://github.com/alexkay/spek)
