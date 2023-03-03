@@ -149,7 +149,7 @@ OPTIONS
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified.  Defaults to 1080px.  Constraint is dropped when no formats comply.
+            specified.  Defaults to 1280px.  Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and

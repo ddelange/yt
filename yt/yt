@@ -75,7 +75,7 @@ OPTIONS
 
       -P PIXELS
             Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified.  Defaults to 1080px.  Constraint is dropped when no formats comply.
+            specified.  Defaults to 1280px.  Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
@@ -111,7 +111,7 @@ All rights reserved."
   local CUSTOM_AUDIO_BITRATE=false
   local AUDIO_BITRATE=257
   local AUDIO_SAMPLING_RATE=44100
-  local MAX_PIXELS=1080
+  local MAX_PIXELS=1280  # Youtube Shorts are max 720x1280 (portrait)
   local MP4=false
   local AVC=false
   local HDR=false
@@ -282,7 +282,7 @@ All rights reserved."
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${hdr_selector})+(${audio_selector})/${fallback_video_selector}")
     elif $MP4; then
       local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE}")
-      if [ $MAX_PIXELS -gt 1080 ] && ! $SILENT; then
+      if [ $MAX_PIXELS -gt 1280 ] && ! $SILENT; then
         echo "Maximum resolution is set to ${MAX_PIXELS}, and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
       fi
       if $AVC; then
@@ -293,7 +293,7 @@ All rights reserved."
     else
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${default_video_selector})+(${audio_selector})/${fallback_video_selector}")
     fi
-    DOWNLOAD_OPTIONS+=(--all-subs --embed-subs --sub-format "srt/best")
+    DOWNLOAD_OPTIONS+=(--embed-subs --all-subs --sub-format "srt/best")
   else
     local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "-ar ${AUDIO_SAMPLING_RATE}" -x -f "${audio_selector}/best")
     if $KEEP_AUDIO; then
