@@ -74,8 +74,9 @@ OPTIONS
             Set the output audio sampling rate. Defaults to 44100Hz.
 
       -P PIXELS
-            Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified.  Defaults to 1280px.  Constraint is dropped when no formats comply.
+            Set the maximum pixels of the video output.  Ignored when -v is not specified.
+            Defaults to 1920px. Constraint is dropped when no formats comply. For portrait
+            and landscape videos,  this corresponds to the  height and width respectively.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
@@ -282,7 +283,7 @@ All rights reserved."
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${hdr_selector})+(${audio_selector})/${fallback_video_selector}")
     elif $MP4; then
       local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "-threads 0 -vcodec copy -acodec aac -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE}")
-      if [ $MAX_PIXELS -gt 1280 ] && ! $SILENT; then
+      if [ $MAX_PIXELS -gt 1920 ] && ! $SILENT; then
         echo "Maximum resolution is set to ${MAX_PIXELS}, and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
       fi
       if $AVC; then

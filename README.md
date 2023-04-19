@@ -148,8 +148,9 @@ OPTIONS
             Set the output audio sampling rate. Defaults to 44100Hz.
 
       -P PIXELS
-            Set the maximum height in pixels  of the video output.  Ignored when -v is not
-            specified.  Defaults to 1280px.  Constraint is dropped when no formats comply.
+            Set the maximum pixels of the video output.  Ignored when -v is not specified.
+            Defaults to 1920px. Constraint is dropped when no formats comply. For portrait
+            and landscape videos,  this corresponds to the  height and width respectively.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
