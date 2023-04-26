@@ -313,15 +313,15 @@ All rights reserved."
 
   if $PARALLEL; then
     if $SILENT; then
-      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "{}" > /dev/null
+      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" -- "{}" > /dev/null
     else
-      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "{}"
+      printf "\"%s\"\n" "${URLS[@]}" | xargs -n 1 -P ${PARALLELISM} -I{} youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" -- "{}"
     fi
   else
     if $SILENT; then
-      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[@]}" > /dev/null
+      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" -- "${URLS[@]}" > /dev/null
     else
-      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" "${URLS[@]}"
+      youtube-dl "${BASE_OPTIONS[@]}" "${DOWNLOAD_OPTIONS[@]}" -- "${URLS[@]}"
     fi
   fi
 }
