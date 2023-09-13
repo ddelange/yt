@@ -1,5 +1,5 @@
 # yt - fine-tuning the use of youtube-dl
-Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For a full list of supported sites and services, see https://github.com/ytdl-org/youtube-dl/blob/master/docs/supportedsites.md.
+Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For a full list of supported sites and services, see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 ![yt](https://user-images.githubusercontent.com/14880945/62221781-86e1b400-b3b2-11e9-873f-2dd323bcf154.gif)
 
@@ -78,7 +78,7 @@ tl;dr:
 NAME
       yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
       Soundcloud,  Instagram,  Facebook.  For a full list of supported sites and services,
-      see https://github.com/ytdl-org/youtube-dl/blob/master/docs/supportedsites.md
+      see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 SYNOPSIS
       yt [OPTIONS] [URL] [URL...]
@@ -151,6 +151,10 @@ OPTIONS
             Set the maximum pixels of the video output.  Ignored when -v is not specified.
             Defaults to 1920px. Constraint is dropped when no formats comply. For portrait
             and landscape videos,  this corresponds to the  height and width respectively.
+
+      -F FRAMES
+            Set the maximum framerate in frames per second. Defaults to 42. Ignored when
+            -v is not specified. Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
