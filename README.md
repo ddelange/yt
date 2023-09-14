@@ -1,10 +1,10 @@
-# yt - fine-tuning the use of youtube-dl
-Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For a full list of supported sites and services, see https://github.com/ytdl-org/youtube-dl/blob/master/docs/supportedsites.md.
+# yt - fine-tuning the use of youtube-dl / yt-dlp
+Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For a full list of supported sites and services, see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 ![yt](https://user-images.githubusercontent.com/14880945/62221781-86e1b400-b3b2-11e9-873f-2dd323bcf154.gif)
 
 ## Description
-[yt](https://github.com/ddelange/yt) is a pure-bash command-line tool that optimizes the use of [youtube-dl](https://github.com/ytdl-org/youtube-dl) for audio and videophiles with comprehensive and customizable presets, empirically tested on multiple streams. Maintains a download archive, to prevent duplicates when periodically downloading YouTube playlists or Soundcloud sets. Parses title ("%(artist)s - %(title)s") and retrieves a thumbnail, and injects these into file metadata. Adds the url id of the source to the filename, attempts to bypass geographical restrictions, and more.
+[yt](https://github.com/ddelange/yt) is a pure-bash command-line tool that optimizes the use of [yt-dlp](https://github.com/yt-dlp/yt-dlp) for audio and videophiles with comprehensive and customizable presets, empirically tested on multiple streams. Maintains a download archive, to prevent duplicates when periodically downloading YouTube playlists or Soundcloud sets. Parses title ("%(artist)s - %(title)s") and retrieves a thumbnail, and injects these into file metadata. Adds the url id of the source to the filename, attempts to bypass geographical restrictions, and more.
 
 #### Features include, but are not limited to:
 - Parallel downloads
@@ -16,11 +16,11 @@ Download music or video from e.g. YouTube, Soundcloud, Instagram, Facebook. For 
 - Embedded subtitle tracks
 - Embedded metadata like chapter information and description
 
-The audio streams in converted (video) files from `yt` will generally be of higher quality compared to [online alternatives](https://www.google.nl/search?q=youtube+to+mp3+online), while maintaining a comparable file size. This is achieved by preferring WAV/OPUS source streams, and by converting using the [Fraunhofer FDK AAC codec library](https://trac.ffmpeg.org/wiki/Encode/AAC#fdk_aac) at a bitrate of 256kbit/s (sufficient to encode a full 44.1kHz stream using `libfdk_aac` without losing detail at higher frequencies).
+The audio streams in converted (video) files from `yt` will generally be of higher quality compared to [online alternatives](https://www.google.nl/search?q=youtube+to+mp3+online), while maintaining a comparable file size. This is achieved by preferring WAV/OPUS source streams, and by converting using the [Fraunhofer FDK AAC codec library](https://trac.ffmpeg.org/wiki/Encode/AAC#fdk_aac) or when available the Mac OS Audiotoolbox (even better) at a bitrate of 256kbit/s (sufficient to encode a full 44.1kHz stream without losing detail at higher frequencies, see benchmark [here](https://gist.github.com/ScribbleGhost/54ad17da006e8bba4a1612bd6a64571c?permalink_comment_id=4691994#gistcomment-4691994)).
 [![yt vs online](https://user-images.githubusercontent.com/14880945/62381156-246feb80-b54b-11e9-8445-3890c091d0c3.gif)](https://github.com/alexkay/spek)
 
 ## Installation
-Dependencies are installations of `youtube-dl`, `atomicparsley`, and `ffmpeg` compiled using at least `--with-fdk-aac` (fdk-aac is GPL-incompatible, so this will produce an unredistributable distribution).
+Dependencies are installations of `yt-dlp`, `atomicparsley`, and `ffmpeg` preferably compiled using `--enable-audiotoolbox` on Mac and `--with-fdk-aac` on other operating systems. Note that fdk-aac is GPL-incompatible, so this will produce an unredistributable distribution.
 
 #### OSX
 To install `yt` and its dependencies:
@@ -30,7 +30,7 @@ brew install ddelange/brewformulae/yt
 
 Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
 - Compile `ffmpeg` [including](https://trac.ffmpeg.org/wiki/CompilationGuide/macOS#Additionaloptions) `--with-fdk-aac`.
-- [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`.
+- [Install](https://github.com/yt-dlp/yt-dlp#installation) `yt-dlp`.
 - Install [`atomicparsley`](https://github.com/wez/atomicparsley).
 - Put [`yt`](yt/yt) in your path:
     ```bash
@@ -47,7 +47,7 @@ brew install ddelange/brewformulae/yt
 
 Or manually (if you wish to avoid Homebrew, and install the dependencies yourself):
 - Compile `ffmpeg` including `--with-fdk-aac`. See example instructions, pick your favorite: [[1]](https://seanthegeek.net/455/how-to-compile-and-install-ffmpeg-4-0-on-debian-ubuntu/) [[2]](https://gist.github.com/rafaelbiriba/7f2d7c6f6c3d6ae2a5cb)
-- [Install](https://github.com/ytdl-org/youtube-dl#installation) `youtube-dl`.
+- [Install](https://github.com/yt-dlp/yt-dlp#installation) `yt-dlp`.
 - Install [`atomicparsley`](https://github.com/wez/atomicparsley).
 - Put [`yt`](yt/yt) in your path:
     ```bash
@@ -57,14 +57,14 @@ Or manually (if you wish to avoid Homebrew, and install the dependencies yoursel
     ```
 
 #### Windows
-Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about), and using instructions above. But since `youtube-dl` has dedicated Windows distributions available, you could try the following:
+Easiest would be using the [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about), and using instructions above. But since `yt-dlp` has dedicated Windows distributions available, you could try the following:
 
 [untested, assumes you're running Bash for Windows]
 - [Compile](https://github.com/jb-alvarado/media-autobuild_suite#information) `ffmpeg` including the `non-free tools` (which will contain `libfdk-aac`).
-- Install `youtube-dl`:
-    - [either] Assuming python / python3 and pip / pip3 are installed, run `sudo pip3 install youtube-dl` or `sudo pip3 install youtube-dl` respectively.
-    - [or] Download [youtube-dl.exe](https://yt-dl.org/latest/youtube-dl.exe) and place it in any location on your [PATH](https://en.wikipedia.org/wiki/PATH_%28variable%29).
-- Make sure `youtube-dl` is recognized by your shell by typing `youtube-dl --version`.
+- Install `yt-dlp`:
+    - [either] Assuming python / python3 and pip / pip3 are installed, run `sudo pip3 install yt-dlp` or `sudo pip3 install yt-dlp` respectively.
+    - [or] Download [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/releases/latest) and place it in any location on your [PATH](https://en.wikipedia.org/wiki/PATH_%28variable%29).
+- Make sure `yt-dlp` is recognized by your shell by typing `yt-dlp --version`.
 - Put [`yt`](yt/yt) in your path.
 
 ## Usage
@@ -76,38 +76,24 @@ tl;dr:
 
 ```
 NAME
-      yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
-      Soundcloud,  Instagram,  Facebook.  For a full list of supported sites and services,
-      see https://github.com/ytdl-org/youtube-dl/blob/master/docs/supportedsites.md
+      yt  -  fine-tuning the use of youtube-dl / yt-dlp. Download music or video from e.g.
+      YouTube,  Soundcloud,  Instagram,  Facebook.  For a full list of supported sites and
+      services, see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 SYNOPSIS
       yt [OPTIONS] [URL] [URL...]
 
 DESCRIPTION
-      yt is a bash function that optimizes the use of youtube-dl for audio and videophiles
+      yt is a bash function that  optimizes the use of  yt-dlp  for audio and  videophiles
       with comprehensive and customizable presets, empirically tested on multiple streams.
       Maintains a  download archive,  to prevent duplicates when  periodically downloading
       YouTube playlists or Soundcloud sets.  Parses title  ("%(artist)s - %(title)s")  and
       retrieves a thumbnail, and injects these into file metadata.  Adds the url id of the
       source to the filename, and attempts to bypass geographical restrictions.
 
-      youtube-dl  is a command-line program to download videos from  YouTube.com  and many
-      more sites.  It requires the Python interpreter, version 2.6, 2.7, or 3.2+,  and  it
-      is not platform specific.  It should work on your Unix box,  on Windows or on macOS.
-      It is released to the public domain,  which means you can modify it, redistribute it
-      or use it however you like.
-
-REQUIREMENTS
-      installations  of  youtube-dl  (e.g. "brew install youtube-dl")  and ffmpeg compiled
-      with --enable-libfdk-aac (e.g. "brew install ffmpeg --with-fdk-aac").
-
 OPTIONS
       -h, --help
             Print this help text and exit.
-
-      -U
-            Update  youtube-dl  to latest  version  and  exit.  Make  sure  that  you have
-            sufficient permissions (run with sudo if needed).
 
       -s
             Enable silent mode (send stdout to /dev/null).
@@ -115,7 +101,7 @@ OPTIONS
       -S
             Enable sequential mode.  Default behaviour: parallel mode.  The MAXPROCS (env)
             var sets parallelism  (default 4).  To download YouTube playlists in parallel,
-            use e.g. "yt -v $(youtube-dl --get-id --flat-playlist <playlist-url>)".
+            use e.g. "yt -v $(yt-dlp --get-id --flat-playlist <playlist-url>)".
 
       -f
             Force download, even when already recorded in --download-archive.
@@ -151,6 +137,10 @@ OPTIONS
             Set the maximum pixels of the video output.  Ignored when -v is not specified.
             Defaults to 1920px. Constraint is dropped when no formats comply. For portrait
             and landscape videos,  this corresponds to the  height and width respectively.
+
+      -F FRAMES
+            Set the maximum framerate in frames per second. Defaults to 42. Ignored when
+            -v is not specified. Constraint is dropped when no formats comply.
 
       -m
             Use MP4 when merging audio/video streams, keeping video codecs if possible and
