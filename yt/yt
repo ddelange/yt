@@ -7,7 +7,7 @@ yt() {
       services, see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 SYNOPSIS
-      yt [OPTIONS] [URL] [URL...]
+      yt [OPTIONS] -- [URL] [URL...]
 
 DESCRIPTION
       yt is a bash function that  optimizes the use of  yt-dlp  for audio and  videophiles
@@ -27,7 +27,7 @@ OPTIONS
       -S
             Enable sequential mode.  Default behaviour: parallel mode.  The MAXPROCS (env)
             var sets parallelism  (default 4).  To download YouTube playlists in parallel,
-            use e.g. \"yt -v \$(yt-dlp --get-id --flat-playlist <playlist-url>)\".
+            use e.g. \"yt -v -- \$(yt-dlp --get-id --flat-playlist <playlist-url>)\".
 
       -f
             Force download, even when already recorded in --download-archive.
