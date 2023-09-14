@@ -2,38 +2,24 @@
 
 yt() {
   local usage="NAME
-      yt - fine-tuning the use of youtube-dl.  Download music or video from e.g.  YouTube,
-      Soundcloud,  Instagram,  Facebook.  For a full list of supported sites and services,
-      see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
+      yt  -  fine-tuning the use of youtube-dl / yt-dlp. Download music or video from e.g.
+      YouTube,  Soundcloud,  Instagram,  Facebook.  For a full list of supported sites and
+      services, see https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md.
 
 SYNOPSIS
       yt [OPTIONS] [URL] [URL...]
 
 DESCRIPTION
-      yt is a bash function that optimizes the use of youtube-dl for audio and videophiles
+      yt is a bash function that  optimizes the use of  yt-dlp  for audio and  videophiles
       with comprehensive and customizable presets, empirically tested on multiple streams.
       Maintains a  download archive,  to prevent duplicates when  periodically downloading
       YouTube playlists or Soundcloud sets.  Parses title  (\"%(artist)s - %(title)s\")  and
       retrieves a thumbnail, and injects these into file metadata.  Adds the url id of the
       source to the filename, and attempts to bypass geographical restrictions.
 
-      youtube-dl  is a command-line program to download videos from  YouTube.com  and many
-      more sites.  It requires the Python interpreter, version 2.6, 2.7, or 3.2+,  and  it
-      is not platform specific.  It should work on your Unix box,  on Windows or on macOS.
-      It is released to the public domain,  which means you can modify it, redistribute it
-      or use it however you like.
-
-REQUIREMENTS
-      installations  of  youtube-dl  (e.g. \"brew install youtube-dl\")  and ffmpeg compiled
-      with --enable-libfdk-aac (e.g. \"brew install ffmpeg --with-fdk-aac\").
-
 OPTIONS
       -h, --help
             Print this help text and exit.
-
-      -U
-            Update  youtube-dl  to latest  version  and  exit.  Make  sure  that  you have
-            sufficient permissions (run with sudo if needed).
 
       -s
             Enable silent mode (send stdout to /dev/null).
@@ -41,7 +27,7 @@ OPTIONS
       -S
             Enable sequential mode.  Default behaviour: parallel mode.  The MAXPROCS (env)
             var sets parallelism  (default 4).  To download YouTube playlists in parallel,
-            use e.g. \"yt -v \$(youtube-dl --get-id --flat-playlist <playlist-url>)\".
+            use e.g. \"yt -v \$(yt-dlp --get-id --flat-playlist <playlist-url>)\".
 
       -f
             Force download, even when already recorded in --download-archive.
@@ -122,9 +108,14 @@ All rights reserved."
   local AVC=false
   local HDR=false
   local URLS=()
-
-  # TODO
-  # dependency check e.g. $(ffmpeg -codecs | grep -w libfdk_aac)
+  local CODECS=$(ffmpeg -codecs -hide_banner)
+  if echo ${CODECS} | grep -q 'aac_at'; then
+    local ENCODER='aac_at'
+  elif echo ${CODECS} | grep -q 'libfdk_aac'; then
+    local ENCODER='libfdk_aac'
+  else
+    local ENCODER='aac'
+  fi
 
   # TODO
   # ~$ sudo yt -U
@@ -138,9 +129,6 @@ All rights reserved."
   fi
   while getopts ":hUsSfvcD:pka:r:P:mMH" opt; do
     case $opt in
-      U)
-        sudo youtube-dl -U
-        return;;
       h)
         echo "$usage"
         return;;
@@ -277,7 +265,7 @@ All rights reserved."
   fi
 
   # BASE_OPTIONS
-  local BASE_OPTIONS=(--geo-bypass --ignore-config -i -F --no-simulate --verbose)
+  local BASE_OPTIONS=(--geo-bypass --ignore-config -i -F --no-simulate)
   local output_filename="${destination}%(title).200s %(id)s.%(ext)s"
   local download_archive="${destination}downloaded.txt"
   BASE_OPTIONS+=(-o "$output_filename")
@@ -304,7 +292,7 @@ All rights reserved."
     if $HDR; then
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${hdr_selector})+(${audio_selector})/${fallback_video_selector}")
     elif $MP4; then
-      local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "Merger:-threads 0 -vcodec copy -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE} -acodec libfdk_aac -cutoff 20000")
+      local DOWNLOAD_OPTIONS=(--merge-output-format mp4 --postprocessor-args "Merger:-threads 0 -vcodec copy -b:a ${AUDIO_BITRATE}k -ar ${AUDIO_SAMPLING_RATE} -acodec ${ENCODER} -cutoff 20000")
       if [ $MAX_PIXELS -gt 1920 ] && ! $SILENT; then
         echo "Maximum resolution is set to ${MAX_PIXELS}, and -m is present. Downloads will be limited to max 1080p on sites that don't provide higher resolution video streams in MP4 container (e.g. YouTube)."
       fi
@@ -318,7 +306,7 @@ All rights reserved."
     fi
     DOWNLOAD_OPTIONS+=(--embed-subs --sub-langs all,-live_chat --sub-format "srt/best")
   else
-    local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "ExtractAudio:-ar ${AUDIO_SAMPLING_RATE} -acodec libfdk_aac -cutoff 20000" -x -f "${audio_selector}/best")
+    local DOWNLOAD_OPTIONS=(--embed-thumbnail --audio-format m4a --audio-quality ${AUDIO_BITRATE}k --postprocessor-args "ExtractAudio:-ar ${AUDIO_SAMPLING_RATE} -acodec ${ENCODER} -cutoff 20000" -x -f "${audio_selector}/best")
     if $KEEP_AUDIO; then
       DOWNLOAD_OPTIONS+=(-k)
     fi
