@@ -85,6 +85,9 @@ OPTIONS
       -H
             Prefer HDR streams. Tested on YouTube videos. Overrides -m.
 
+      -A
+            Embed all available audio streams. Ignored when -v is not specified.
+
 BSD 3-Clause License
 
 Copyright (c) 2019, ddelange
@@ -98,6 +101,7 @@ All rights reserved."
   local CUSTOM_DESTINATION=
   local PLAYLIST=false
   local KEEP_AUDIO=false
+  local AUDIO_MULTISTREAMS=false
   local FORCE=false
   local CUSTOM_AUDIO_BITRATE=false
   local AUDIO_BITRATE=256
@@ -127,7 +131,7 @@ All rights reserved."
   if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     set -- "-h"
   fi
-  while getopts ":hUsSfvcD:pka:r:P:mMH" opt; do
+  while getopts ":hUsSfvcD:pka:r:P:mMAH" opt; do
     case $opt in
       h)
         echo "$usage"
@@ -226,6 +230,9 @@ All rights reserved."
       H)
         HDR=true
         ;;
+      A)
+        AUDIO_MULTISTREAMS=true
+        ;;
       \?)
         echo "Invalid option: -$OPTARG"
         return;;
@@ -291,6 +298,9 @@ All rights reserved."
   local default_video_selector="bestvideo[vcodec~='(vp09.00|vp9)']${px_spec}/bestvideo[vcodec!=vp09.02]${px_spec}/bestvideo${px_spec}/bestvideo"
   local fallback_video_selector="best${px_spec}/best"
   if $VIDEO_MODE; then
+    if $AUDIO_MULTISTREAMS; then
+      audio_selector='mergeall[vcodec=none]'
+    fi
     if $HDR; then
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${hdr_selector})+(${audio_selector})/${fallback_video_selector}")
     elif $MP4; then
@@ -305,6 +315,9 @@ All rights reserved."
       fi
     else
       local DOWNLOAD_OPTIONS=(--merge-output-format mkv -f "(${default_video_selector})+(${audio_selector})/${fallback_video_selector}")
+    fi
+    if $AUDIO_MULTISTREAMS; then
+      DOWNLOAD_OPTIONS+=(--audio-multistreams)
     fi
     DOWNLOAD_OPTIONS+=(--embed-subs --sub-langs all,-live_chat --sub-format "srt/best")
   else

@@ -159,6 +159,9 @@ OPTIONS
       -H
             Prefer HDR streams. Tested on YouTube videos. Overrides -m.
 
+      -A
+            Embed all available audio streams. Ignored when -v is not specified.
+
 BSD 3-Clause License
 
 Copyright (c) 2019, ddelange
